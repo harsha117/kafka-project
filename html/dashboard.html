@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Product Updates</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f7f7f7;
+        }
+        h1 {
+            color: #333;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background: #f4f4f4;
+            margin: 5px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .event-type {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        .event-data {
+            color: #333;
+        }
+        .event-item {
+            margin-bottom: 10px;
+        }
+    </style>
+    <script>
+        let ws;
+
+        function connectWebSocket() {
+            // Establish the WebSocket connection
+            ws = new WebSocket("ws://localhost:3000/ws");
+
+            ws.onopen = function() {
+                console.log("WebSocket connection established.");
+            };
+
+            ws.onmessage = function(event) {
+                try {
+                    const log = document.getElementById("log");
+                    const message = JSON.parse(event.data);
+
+                    // Create a list item for each incoming message
+                    const entry = document.createElement("li");
+                    entry.classList.add("event-item");
+
+                    const eventType = document.createElement("div");
+                    eventType.classList.add("event-type");
+                    eventType.textContent = `Event Type: ${message.event_type}`;
+
+                    const eventData = document.createElement("div");
+                    eventData.classList.add("event-data");
+                    eventData.textContent = `Data: ${JSON.stringify(message.data)}`;
+
+                    entry.appendChild(eventType);
+                    entry.appendChild(eventData);
+                    log.appendChild(entry);
+                } catch (error) {
+                    console.error("Error parsing message:", error);
+                }
+            };
+
+            ws.onerror = function(error) {
+                console.error("WebSocket error:", error);
+            };
+
+            ws.onclose = function(event) {
+                console.log("WebSocket connection closed. Reconnecting in 5 seconds...");
+                setTimeout(connectWebSocket, 5000); // Reconnect after 5 seconds
+            };
+        }
+
+        // Initialize WebSocket connection when the page loads
+        window.onload = function() {
+            connectWebSocket();
+        };
+    </script>
+</head>
+<body>
+    <h1>Product Updates Dashboard</h1>
+    <ul id="log"></ul>
+</body>
+</html>
