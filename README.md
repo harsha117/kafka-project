@@ -153,8 +153,8 @@ pip3 --version
 ### For Both Linux and Windows
 1. Clone the repository:
    ```bash
-   git clone <repository_url>
-   cd <repository_name>
+   git clone https://github.com/harsha117/kafka-project.git
+   cd kafka-project
    ```
 2. Create a Python virtual environment:
    ```bash
